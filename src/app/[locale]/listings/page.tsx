@@ -30,7 +30,7 @@ export default async function ListingsPage({ searchParams }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 bg-surface py-8">
+      <main className="flex-1 bg-[#f7f8f5]">
         <ListingsView initialFilters={initialFilters} />
       </main>
       <Footer />

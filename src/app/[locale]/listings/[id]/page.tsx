@@ -40,7 +40,7 @@ export default async function ListingPage({ params }: Props) {
   ]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface">
+    <div className="flex min-h-screen flex-col bg-[#f7f8f5]">
       <Header />
       <main className="flex-1">
         <ListingDetail listing={listing} seller={seller} related={related} />
