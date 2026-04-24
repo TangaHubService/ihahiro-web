@@ -1,95 +1,123 @@
-"use client";
+'use client'
 
-import { Container } from "@/components/layout/Container";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { defaultListingFilters } from "@/lib/defaultFilters";
-import { useListings } from "@/hooks/useListings";
-import { Link } from "@/i18n/navigation";
-import { ChevronRight, MapPin } from "lucide-react";
-import Image from "next/image";
-import { useTranslations } from "next-intl";
+import {
+  HOME_PRODUCT_ORDER,
+  getHomeProductVisual,
+  type HomeCatalogKey,
+} from '@/components/home/homeMarketplaceCatalog'
+import { Container } from '@/components/layout/Container'
+import { useListings } from '@/hooks/useListings'
+import { Link } from '@/i18n/navigation'
+import { ChevronRight, MapPin } from 'lucide-react'
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+
+type HomeFeaturedCard = {
+  id: string
+  href: string
+  image: string
+  location: string
+  name: string
+  price: number
+}
 
 export function HomeFeaturedGrid() {
-  const t = useTranslations("home");
-  const tCommon = useTranslations("common");
-  const tProducts = useTranslations("products");
-  const { data, isPending, isError, refetch } = useListings({
-    ...defaultListingFilters,
-    sort: "newest",
-    pageSize: 6,
-    page: 1,
-  });
+  const t = useTranslations('home')
+  const tCommon = useTranslations('common')
+  const tProducts = useTranslations('products')
+  const { data, isPending, isError } = useListings({
+    status: 'PUBLISHED',
+    limit: 6,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+  })
+
+  const sampleCards: HomeFeaturedCard[] = HOME_PRODUCT_ORDER.map((key) => {
+    const visual = getHomeProductVisual(key)
+
+    return {
+      id: key,
+      href: '/listings',
+      image: visual.image,
+      location: visual.location,
+      name: tProducts(key as HomeCatalogKey),
+      price: visual.price,
+    }
+  })
+
+  const cards: HomeFeaturedCard[] =
+    data?.items?.length && !isError
+      ? data.items.slice(0, 6).map((listing, index) => {
+          const visual = getHomeProductVisual(
+            listing.product?.name ?? listing.title,
+            index
+          )
+
+          return {
+            id: listing.id,
+            href: `/listings/${listing.id}`,
+            image: visual.image,
+            location: listing.location?.name ?? visual.location,
+            name: listing.product?.name ?? listing.title,
+            price: listing.price || visual.price,
+          }
+        })
+      : sampleCards
 
   return (
-    <section className="bg-white py-8 md:py-10">
+    <section className="bg-white py-12 md:py-14">
       <Container>
-        <div>
-          <h2 className="text-center text-[2rem] font-bold text-primary">
-            {t("featuredTitle")}
+        <div className="relative">
+          <h2 className="text-center text-[2rem] font-black leading-tight tracking-[-0.04em] text-[#173b1b] sm:text-[2.35rem]">
+            {t('featuredTitle')}
           </h2>
-          <div className="mt-1 flex justify-end">
-            <Link
-              href="/listings"
-              className="group inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
-            >
-              {tCommon("viewAll")}
-              <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+          <Link
+            href="/listings"
+            className="group mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline md:absolute md:right-0 md:top-1 md:mt-0"
+          >
+            {tCommon('viewAll')}
+            <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
 
-        {isError ? (
-          <Card className="mt-10 p-8 text-center">
-            <p className="text-muted">{tCommon("error")}</p>
-            <Button className="mt-4" onClick={() => refetch()}>
-              {tCommon("retry")}
-            </Button>
-          </Card>
-        ) : null}
-
-        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-          {isPending
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i} className="h-[228px] animate-pulse bg-white" />
-              ))
-            : data?.items.map((listing) => (
-                <Card
-                  key={listing.id}
-                  className="flex w-full min-w-0 flex-col overflow-hidden rounded-md border border-[#dfe4e1] bg-white shadow-sm"
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {cards.map((card, index) => (
+            <article
+              key={card.id}
+              className="overflow-hidden rounded-[1.05rem] border border-[#dfe7dc] bg-white shadow-[0_12px_24px_rgba(21,45,25,0.04)]"
+            >
+              <div className="relative aspect-[1.45/1] w-full overflow-hidden bg-[#eef4ea]">
+                <Image
+                  src={card.image}
+                  alt={card.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 16vw"
+                  priority={index < 2 && !isPending}
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="truncate text-[1.05rem] font-bold text-[#17311b]">
+                  {card.name}
+                </h3>
+                <p className="mt-1 flex items-center gap-1 text-xs text-[#687269]">
+                  <MapPin className="size-3.5 shrink-0" aria-hidden />
+                  <span className="truncate">{card.location}</span>
+                </p>
+                <p className="mt-4 text-[1.15rem] font-black text-primary">
+                  {card.price} RWF {tCommon('perKg')}
+                </p>
+                <Link
+                  href={card.href}
+                  className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-[#14671a]"
                 >
-                  <div className="relative h-[86px] w-full bg-surface">
-                    <Image
-                      src={listing.imageUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="170px"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col p-2.5">
-                    <h3 className="truncate text-[1rem] font-semibold text-foreground">
-                      {tProducts(listing.productKey)}
-                    </h3>
-                    <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
-                      <MapPin className="size-3 shrink-0" aria-hidden />
-                      <span className="truncate">{listing.locationLabel}</span>
-                    </p>
-                    <p className="mt-1.5 text-[1.05rem] font-bold text-primary">
-                      {listing.pricePerKg} {listing.currency} {tCommon("perKg")}
-                    </p>
-                    <div className="mt-auto pt-1.5">
-                      <Link href={`/listings/${listing.id}`} className="block">
-                        <Button className="h-7 w-full rounded-md px-2 text-xs font-semibold">
-                          {tCommon("view")}
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                  {tCommon('view')}
+                </Link>
+              </div>
+            </article>
+          ))}
         </div>
       </Container>
     </section>
-  );
+  )
 }

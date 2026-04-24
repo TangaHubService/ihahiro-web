@@ -29,6 +29,7 @@ It must act like an engineer responsible for the long-term health of the system.
 # 2. General Working Rules
 
 ## 2.1 Understand before changing
+
 Before making changes, the agent must:
 
 - understand the purpose of the feature or bug fix
@@ -39,6 +40,7 @@ Before making changes, the agent must:
 The agent must not guess how the system works when it can inspect the code.
 
 ## 2.2 Follow the existing stack and conventions
+
 The agent must:
 
 - follow the existing language, framework, architecture, folder structure, and coding style
@@ -47,6 +49,7 @@ The agent must:
 - avoid introducing a new library unless it is clearly justified
 
 ## 2.3 Prefer clarity over cleverness
+
 The agent must write code that is:
 
 - explicit
@@ -63,6 +66,7 @@ Avoid:
 - premature optimization
 
 ## 2.4 Build for long-term use
+
 Every implementation should be evaluated against:
 
 - maintainability
@@ -104,6 +108,7 @@ The agent must always ask internally:
 # 4. Architecture Principles
 
 ## 4.1 Prefer clean separation of concerns
+
 The agent must separate responsibilities clearly.
 
 Examples:
@@ -118,6 +123,7 @@ Examples:
 Do not mix everything in one file.
 
 ## 4.2 Avoid tight coupling
+
 The agent must reduce unnecessary dependency between modules.
 
 Prefer:
@@ -136,6 +142,7 @@ Avoid:
 - circular dependencies
 
 ## 4.3 Design for extension
+
 Code should be easy to extend without rewriting major parts.
 
 Prefer:
@@ -148,6 +155,7 @@ Prefer:
 Avoid hardcoding values that are likely to change.
 
 ## 4.4 Respect domain boundaries
+
 The agent must keep business concepts organized.
 
 Examples:
@@ -162,6 +170,7 @@ Examples:
 # 5. Code Quality Standards
 
 ## 5.1 Code must be readable
+
 Every function, class, and module must be easy to understand.
 
 Use:
@@ -179,6 +188,7 @@ Avoid:
 - hidden assumptions
 
 ## 5.2 Functions should do one thing well
+
 A function should have one clear responsibility.
 
 Bad signs:
@@ -188,6 +198,7 @@ Bad signs:
 - function is hard to test in isolation
 
 ## 5.3 Keep files organized
+
 A file should have a clear purpose.
 
 Do not let files become dumping grounds for:
@@ -198,6 +209,7 @@ Do not let files become dumping grounds for:
 - temporary code that never gets cleaned up
 
 ## 5.4 Remove dead code
+
 The agent should remove or clearly flag:
 
 - unused imports
@@ -209,6 +221,7 @@ The agent should remove or clearly flag:
 Do not leave clutter behind.
 
 ## 5.5 Avoid copy-paste engineering
+
 If logic is repeated in multiple places, the agent should:
 
 - identify the shared behavior
@@ -220,6 +233,7 @@ If logic is repeated in multiple places, the agent should:
 # 6. Maintainability Rules
 
 ## 6.1 Optimize for future developers
+
 The next developer should be able to:
 
 - understand the code quickly
@@ -228,6 +242,7 @@ The next developer should be able to:
 - extend features safely
 
 ## 6.2 Use strong naming
+
 Names should describe intent.
 
 Examples of good naming:
@@ -245,6 +260,7 @@ Examples of weak naming:
 - `runProcess`
 
 ## 6.3 Keep logic discoverable
+
 The agent must place logic where developers expect it.
 
 Examples:
@@ -256,6 +272,7 @@ Examples:
 - environment access centralized
 
 ## 6.4 Document non-obvious decisions
+
 Where logic is complex or constrained, the agent should add concise comments explaining why, not what.
 
 Good:
@@ -269,6 +286,7 @@ Bad:
 # 7. Scalability Rules
 
 ## 7.1 Design with growth in mind
+
 The solution should remain healthy as:
 
 - users increase
@@ -278,6 +296,7 @@ The solution should remain healthy as:
 - environments become more complex
 
 ## 7.2 Avoid bottlenecks
+
 The agent should watch for:
 
 - N+1 queries
@@ -288,6 +307,7 @@ The agent should watch for:
 - duplicated API requests
 
 ## 7.3 Make data access efficient
+
 Database access must be intentional.
 
 Prefer:
@@ -305,6 +325,7 @@ Avoid:
 - expensive queries inside loops
 
 ## 7.4 Think about horizontal growth
+
 Where relevant, design code so it can work in multi-instance environments.
 
 Examples:
@@ -321,6 +342,7 @@ Examples:
 Security is required, not optional.
 
 ## 8.1 Validate all inputs
+
 The agent must validate:
 
 - request body
@@ -334,6 +356,7 @@ The agent must validate:
 Never trust client input.
 
 ## 8.2 Enforce authentication and authorization properly
+
 The agent must:
 
 - verify identity before protected actions
@@ -342,6 +365,7 @@ The agent must:
 - avoid exposing unauthorized data
 
 ## 8.3 Protect sensitive data
+
 The agent must:
 
 - never hardcode secrets
@@ -350,6 +374,7 @@ The agent must:
 - sanitize outputs when needed
 
 ## 8.4 Prevent common vulnerabilities
+
 The agent must guard against:
 
 - SQL injection
@@ -363,6 +388,7 @@ The agent must guard against:
 - open redirects where applicable
 
 ## 8.5 Fail safely
+
 When something goes wrong:
 
 - do not leak internals to users
@@ -375,6 +401,7 @@ When something goes wrong:
 # 9. Error Handling Rules
 
 ## 9.1 Handle errors intentionally
+
 The agent must not ignore errors.
 
 Every important operation should consider:
@@ -386,6 +413,7 @@ Every important operation should consider:
 - whether rollback/compensation is needed
 
 ## 9.2 Use consistent error patterns
+
 Prefer centralized and predictable error handling.
 
 Examples:
@@ -396,6 +424,7 @@ Examples:
 - mapped HTTP status codes
 
 ## 9.3 Surface useful context
+
 Logs and internal errors should help identify:
 
 - where the failure happened
@@ -410,6 +439,7 @@ Logs and internal errors should help identify:
 Testing is part of delivery.
 
 ## 10.1 Code should be testable by design
+
 The agent must write code that can be tested without painful setup.
 
 Prefer:
@@ -420,6 +450,7 @@ Prefer:
 - minimal hidden state
 
 ## 10.2 Required testing mindset
+
 For every change, the agent should consider:
 
 - happy path
@@ -430,6 +461,7 @@ For every change, the agent should consider:
 - regression risk
 
 ## 10.3 Test levels
+
 Use the appropriate test levels:
 
 - unit tests for isolated logic
@@ -437,6 +469,7 @@ Use the appropriate test levels:
 - end-to-end tests for critical user flows where appropriate
 
 ## 10.4 Do not fake confidence
+
 The agent must not claim something is tested unless it is actually tested.
 
 If tests were not run, state that clearly.
@@ -446,6 +479,7 @@ If tests were not run, state that clearly.
 # 11. API Design Rules
 
 ## 11.1 APIs should be predictable
+
 Endpoints should be:
 
 - consistent
@@ -455,9 +489,11 @@ Endpoints should be:
 - version-aware when needed
 
 ## 11.2 Validate and sanitize
+
 Each endpoint should validate input and sanitize output where needed.
 
 ## 11.3 Return structured responses
+
 Prefer consistent response structures.
 
 Include:
@@ -469,6 +505,7 @@ Include:
 - pagination metadata for lists
 
 ## 11.4 Make APIs production-safe
+
 Consider:
 
 - idempotency where needed
@@ -483,6 +520,7 @@ Consider:
 # 12. Database Rules
 
 ## 12.1 Treat schema changes carefully
+
 The agent must be cautious with migrations and schema changes.
 
 Before changing schema:
@@ -493,6 +531,7 @@ Before changing schema:
 - consider backward compatibility
 
 ## 12.2 Preserve data integrity
+
 Use:
 
 - proper constraints
@@ -502,6 +541,7 @@ Use:
 - transactional behavior for multi-step writes
 
 ## 12.3 Write safe data operations
+
 The agent must consider:
 
 - race conditions
@@ -511,6 +551,7 @@ The agent must consider:
 - partial failures
 
 ## 12.4 Avoid dangerous shortcuts
+
 Avoid:
 
 - bypassing validation
@@ -523,6 +564,7 @@ Avoid:
 # 13. Frontend Engineering Rules
 
 ## 13.1 Build usable interfaces
+
 UI should be:
 
 - clear
@@ -532,6 +574,7 @@ UI should be:
 - easy to navigate
 
 ## 13.2 Keep components focused
+
 Components should have clear responsibilities.
 
 Prefer:
@@ -542,6 +585,7 @@ Prefer:
 - minimal prop drilling where architecture allows
 
 ## 13.3 Respect UX
+
 The agent must design interactions that feel professional.
 
 Include where relevant:
@@ -555,6 +599,7 @@ Include where relevant:
 - confirmation for destructive actions
 
 ## 13.4 Avoid fragile UI logic
+
 The agent must avoid:
 
 - duplicated API calls
@@ -567,9 +612,11 @@ The agent must avoid:
 # 14. Performance Rules
 
 ## 14.1 Performance matters, but not at the cost of clarity
+
 Start with clean design, then optimize bottlenecks intentionally.
 
 ## 14.2 Watch common performance issues
+
 Examples:
 
 - unnecessary API calls
@@ -580,6 +627,7 @@ Examples:
 - repeated expensive computations
 
 ## 14.3 Measure when possible
+
 Do not assume performance problems.  
 Use evidence where available.
 
@@ -613,12 +661,15 @@ Examples of useful observability areas:
 # 16. Configuration and Environment Management
 
 ## 16.1 Centralize configuration
+
 Configuration should be easy to find and reason about.
 
 ## 16.2 Validate environment variables
+
 The agent must validate all required environment variables at startup.
 
 ## 16.3 Separate environments properly
+
 Support clear separation between:
 
 - local development
@@ -627,6 +678,7 @@ Support clear separation between:
 - production
 
 ## 16.4 Never hardcode environment-specific values
+
 Use configuration and environment variables instead.
 
 ---
@@ -680,6 +732,7 @@ Do not introduce manual-only fragile steps unless unavoidable.
 # 19. Refactoring Rules
 
 ## 19.1 Refactor with purpose
+
 Refactoring should improve:
 
 - readability
@@ -690,9 +743,11 @@ Refactoring should improve:
 - performance where needed
 
 ## 19.2 Avoid unnecessary rewrites
+
 Do not rewrite large areas without clear value.
 
 ## 19.3 Preserve behavior unless change is intentional
+
 When refactoring:
 
 - protect existing behavior
@@ -724,12 +779,15 @@ Documentation should be practical, current, and concise.
 # 21. Git and Change Management
 
 ## 21.1 Make focused changes
+
 The agent should keep changes scoped to the task.
 
 ## 21.2 Avoid unrelated modifications
+
 Do not reformat or rewrite unrelated files unless necessary.
 
 ## 21.3 Write meaningful summaries
+
 When delivering work, summarize:
 
 - what changed
@@ -745,29 +803,35 @@ When delivering work, summarize:
 For each implementation task, the coding agent should follow this sequence:
 
 ## Step 1: Investigate
+
 - inspect relevant files
 - understand current architecture and flow
 - identify constraints and risks
 
 ## Step 2: Plan
+
 - define the target solution
 - identify impacted layers
 - note any assumptions
 - keep the plan practical
 
 ## Step 3: Implement
+
 - write clean and maintainable code
 - follow existing architecture
 - avoid unrelated changes
 
 ## Step 4: Validate
+
 - run or define tests
 - verify edge cases
 - check for regressions
 - confirm build/startup concerns
 
 ## Step 5: Report
+
 Provide a clear summary with:
+
 - files changed
 - key decisions
 - risks or follow-up needs

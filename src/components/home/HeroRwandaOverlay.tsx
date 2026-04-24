@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPin } from 'lucide-react'
 
 export function HeroRwandaOverlay() {
   return (
@@ -33,5 +33,5 @@ export function HeroRwandaOverlay() {
         </div>
       </div>
     </div>
-  );
+  )
 }

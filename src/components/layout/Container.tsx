@@ -1,13 +1,13 @@
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes } from 'react'
 
 export function Container({
-  className = "",
+  className = '',
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 ${className}`}
+      className={`mx-auto w-full px-4 sm:px-6 lg:px-10 ${className}`}
       {...props}
     />
-  );
+  )
 }

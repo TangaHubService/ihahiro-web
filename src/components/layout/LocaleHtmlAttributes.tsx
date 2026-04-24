@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
+import { useEffect } from 'react'
 
 export function LocaleHtmlAttributes({ locale }: { locale: string }) {
   useEffect(() => {
-    document.documentElement.lang = locale;
-  }, [locale]);
-  return null;
+    document.documentElement.lang = locale
+  }, [locale])
+  return null
 }

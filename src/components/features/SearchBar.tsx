@@ -1,30 +1,30 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Search } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Search } from 'lucide-react'
+import { FormEvent, useState } from 'react'
 
 export type SearchBarProps = {
-  initialQuery?: string;
-  placeholder: string;
-  submitLabel: string;
-  onSearch: (query: string) => void;
-  className?: string;
-};
+  initialQuery?: string
+  placeholder: string
+  submitLabel: string
+  onSearch: (query: string) => void
+  className?: string
+}
 
 export function SearchBar({
-  initialQuery = "",
+  initialQuery = '',
   placeholder,
   submitLabel,
   onSearch,
-  className = "",
+  className = '',
 }: SearchBarProps) {
-  const [value, setValue] = useState(initialQuery);
+  const [value, setValue] = useState(initialQuery)
 
   function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    onSearch(value.trim());
+    e.preventDefault()
+    onSearch(value.trim())
   }
 
   return (
@@ -50,5 +50,5 @@ export function SearchBar({
         {submitLabel}
       </Button>
     </form>
-  );
+  )
 }
