@@ -16,4 +16,20 @@ export const queryKeys = {
     lists: () => ['categories', 'list'] as const,
     list: (filters: { parentId?: string }) => ['categories', 'list', filters] as const,
   },
+  favorites: {
+    all: ['favorites'] as const,
+  },
+  profile: {
+    detail: ['profile'] as const,
+  },
+  chat: {
+    threads: ['chat', 'threads'] as const,
+    messages: (threadId: string) => ['chat', 'messages', threadId] as const,
+  },
+  moderation: {
+    stats: ['moderation', 'stats'] as const,
+    pendingListings: (page: number) => ['moderation', 'pending-listings', page] as const,
+    pendingCategories: ['moderation', 'pending-categories'] as const,
+    pendingProducts: ['moderation', 'pending-products'] as const,
+  },
 } as const

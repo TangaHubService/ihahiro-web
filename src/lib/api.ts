@@ -1,42 +1,21 @@
 import { listingsApi, type ListingDetail } from '@/lib/api/listings'
 import { locationsApi, type Location } from '@/lib/api/locations'
-import type { Listing } from '@/lib/api/listings'
-
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:4000/api/v1'
-
-async function fetchFromApi<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    next: { revalidate: 60 },
-  })
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${endpoint}`)
-  }
-  return response.json()
-}
 
 export async function fetchListingById(id: string): Promise<ListingDetail | null> {
   try {
-    return await fetchFromApi<ListingDetail>(`/listings/${id}`)
+    return await listingsApi.getById(id)
   } catch {
     return null
   }
 }
 
-export async function fetchRelatedListings(id: string, limit: number = 4): Promise<Listing[]> {
+export async function fetchRelatedListings(id: string, limit: number = 4) {
   try {
-    const data = await fetchFromApi<{ data: Listing[] }>(`/listings?limit=${limit}&excludeId=${id}`)
-    return data.data ?? []
+    const result = await listingsApi.list({ limit, status: 'PUBLISHED', excludeId: id })
+    return result.items
   } catch {
     return []
   }
-}
-
-export async function fetchSellerForListing(id: string): Promise<Listing['seller'] | null> {
-  const listing = await fetchListingById(id)
-  return listing?.seller ?? null
 }
 
 export async function fetchProvinces(): Promise<Location[]> {

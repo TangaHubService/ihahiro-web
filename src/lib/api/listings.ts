@@ -1,5 +1,21 @@
 import { apiClient, API_ENDPOINTS } from './client'
 
+export interface LocationAncestor {
+  id: string
+  name: string
+  type: string
+}
+
+export interface ListingSeller {
+  id: string
+  firstName: string
+  lastName: string
+  phone: string | null
+  avatarUrl: string | null
+  createdAt: string
+  location: { id: string; name: string } | null
+}
+
 export interface Listing {
   id: string
   title: string
@@ -7,14 +23,13 @@ export interface Listing {
   price: number
   quantity: number
   unit: { id: string; name: string; shortName: string | null }
-  product: { id: string; name: string }
-  seller: {
-    id: string
-    firstName: string
-    lastName: string
-    phone: string | null
-  }
-  location: { id: string; name: string; type: string } | null
+  product: { id: string; name: string; category?: { id: string; name: string } | null }
+  seller: ListingSeller
+  location: ({ id: string; name: string; type: string; ancestors?: LocationAncestor[] }) | null
+  contactPhone: string | null
+  contactWhatsapp: string | null
+  qualityGrade: string | null
+  deliveryNote: string | null
   status: 'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' | 'REJECTED' | 'ARCHIVED'
   isActive: boolean
   viewCount: number
@@ -30,10 +45,9 @@ export interface ListingMedia {
   order: number
 }
 
-export interface AddListingMediaInput {
+export interface UploadListingMediaInput {
   listingId: string
-  url: string
-  type: 'image' | 'video'
+  file: File
   order?: number
 }
 
@@ -47,6 +61,7 @@ export interface ListingFilters {
   productId?: string
   categoryId?: string
   sellerId?: string
+  excludeId?: string
   status?: 'PUBLISHED'
   minPrice?: number
   maxPrice?: number
@@ -74,6 +89,10 @@ export interface CreateListingInput {
   unitId: string
   productId: string
   locationId?: string
+  contactPhone?: string
+  contactWhatsapp?: string
+  qualityGrade?: string
+  deliveryNote?: string
   status?: 'DRAFT' | 'PENDING_REVIEW'
 }
 
@@ -86,6 +105,7 @@ export const listingsApi = {
     if (filters.productId) params['productId'] = filters.productId
     if (filters.categoryId) params['categoryId'] = filters.categoryId
     if (filters.sellerId) params['sellerId'] = filters.sellerId
+    if (filters.excludeId) params['excludeId'] = filters.excludeId
     if (filters.status) params['status'] = filters.status
     if (filters.minPrice) params['minPrice'] = String(filters.minPrice)
     if (filters.maxPrice) params['maxPrice'] = String(filters.maxPrice)
@@ -129,8 +149,12 @@ export const listingsApi = {
 }
 
 export const listingMediaApi = {
-  add: async (data: AddListingMediaInput): Promise<ListingMedia> => {
-    return apiClient.post(API_ENDPOINTS.MEDIA.UPLOAD, data)
+  upload: async (data: UploadListingMediaInput): Promise<ListingMedia> => {
+    const formData = new FormData()
+    formData.append('file', data.file)
+    formData.append('listingId', data.listingId)
+    if (data.order !== undefined) formData.append('order', String(data.order))
+    return apiClient.postForm(API_ENDPOINTS.MEDIA.UPLOAD, formData)
   },
 
   list: async (listingId: string): Promise<ListingMedia[]> => {

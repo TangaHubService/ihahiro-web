@@ -2,8 +2,12 @@
 
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
-import { Link } from '@/i18n/navigation'
+import { Link, useRouter } from '@/i18n/navigation'
+import { useAuth } from '@/hooks/useAuth'
+import { useFavorites } from '@/hooks/useFavorites'
 import type { Listing } from '@/lib/api/listings'
+import { getInitials } from '@/lib/utils/getInitials'
+import { UNOPTIMIZE_MEDIA } from '@/lib/utils/mediaImageProps'
 import { Heart, MapPin, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -12,30 +16,53 @@ export type ListingCardProps = {
   listing: Listing
 }
 
+const NEW_LISTING_WINDOW_MS = 3 * 24 * 60 * 60 * 1000
+
 function getSellerName(listing: Listing) {
   return [listing.seller?.firstName, listing.seller?.lastName].filter(Boolean).join(' ').trim()
 }
 
-function getSellerInitials(name: string) {
-  if (!name) return 'IH'
-
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
+function isRecentlyPosted(listing: Listing) {
+  const postedAt = listing.publishedAt ?? listing.createdAt
+  if (!postedAt) return false
+  const postedTime = new Date(postedAt).getTime()
+  if (Number.isNaN(postedTime)) return false
+  return Date.now() - postedTime <= NEW_LISTING_WINDOW_MS
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
   const tCommon = useTranslations('common')
+  const { isAuthenticated } = useAuth()
+  const { isFavorited, toggle } = useFavorites()
+  const router = useRouter()
   const sellerName = getSellerName(listing) || tCommon('farmer')
-  const sellerInitials = getSellerInitials(sellerName)
+  const sellerInitials = getInitials(sellerName)
   const price = new Intl.NumberFormat().format(listing.price)
   const quantity = new Intl.NumberFormat().format(listing.quantity)
+  const favorited = isFavorited(listing.id)
+
+  function handleToggleFavorite(event: React.MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    if (!isAuthenticated) {
+      router.push(`/login?redirect=${encodeURIComponent(`/listings/${listing.id}`)}`)
+      return
+    }
+    toggle(listing.id)
+  }
 
   return (
-    <Card className="group overflow-hidden rounded-[1.35rem] border-[#e4e9e3] bg-white shadow-[0_10px_28px_rgba(21,45,25,0.05)] card-hover">
+    <Card className="group relative overflow-hidden rounded-[1.35rem] border-[#e4e9e3] bg-white shadow-[0_10px_28px_rgba(21,45,25,0.05)] card-hover">
+      <button
+        type="button"
+        onClick={handleToggleFavorite}
+        aria-label={tCommon('saveListing')}
+        aria-pressed={favorited}
+        className="absolute right-3 top-3 z-10 flex size-10 items-center justify-center rounded-full bg-black/18 text-white backdrop-blur-md ring-1 ring-white/45 transition hover:bg-black/30"
+      >
+        <Heart className={favorited ? 'size-5 fill-white' : 'size-5'} strokeWidth={2.2} aria-hidden />
+      </button>
+
       <Link
         href={`/listings/${listing.id}`}
         className="block outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -45,22 +72,19 @@ export function ListingCard({ listing }: ListingCardProps) {
             src={listing.media?.[0]?.url ?? '/hero.png'}
             alt={listing.title}
             fill
+            unoptimized={UNOPTIMIZE_MEDIA}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
             className="object-cover"
           />
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/15 to-transparent" />
 
-          {listing.isActive ? (
+          {isRecentlyPosted(listing) ? (
             <span className="absolute left-3 top-3">
               <Badge className="rounded-full border-0 bg-primary px-3 py-1 text-[0.72rem] font-bold text-white shadow-sm">
                 {tCommon('new')}
               </Badge>
             </span>
           ) : null}
-
-          <span className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full bg-black/18 text-white backdrop-blur-md ring-1 ring-white/45">
-            <Heart className="size-5" strokeWidth={2.2} aria-hidden />
-          </span>
         </div>
 
         <div className="space-y-4 p-4">

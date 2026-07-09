@@ -12,6 +12,7 @@ import { categoriesApi, type Category } from '@/lib/api/products'
 import { Link } from '@/i18n/navigation'
 import type { ListingFilters } from '@/lib/api/listings'
 import type { LocationCascadeValue } from '@/components/features/LocationCascade'
+import { extractLocationId } from '@/lib/utils/extractLocationId'
 import {
   Apple,
   Carrot,
@@ -47,16 +48,6 @@ interface ListingsFilterState {
 }
 
 type PaginationItem = number | 'ellipsis'
-
-function extractLocationId(loc?: LocationCascadeValue): string | undefined {
-  if (!loc) return undefined
-  if (loc.villageId) return loc.villageId
-  if (loc.cellId) return loc.cellId
-  if (loc.sectorId) return loc.sectorId
-  if (loc.districtId) return loc.districtId
-  if (loc.provinceId) return loc.provinceId
-  return undefined
-}
 
 function getInitialSort(initialFilters?: Partial<ListingFilters>) {
   if (initialFilters?.sortBy === 'price') {

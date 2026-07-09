@@ -9,6 +9,8 @@ import { listingMediaApi, listingsApi } from '@/lib/api/listings'
 import { productsApi, unitsApi, categoriesApi, type Product, type Unit, type Category } from '@/lib/api/products'
 import { SearchableSelect } from '@/components/ui/SearchableSelect'
 import { queryKeys } from '@/lib/queryKeys'
+import { compressImage } from '@/lib/utils/compressImage'
+import { extractLocationId } from '@/lib/utils/extractLocationId'
 import { getErrorMessage } from '@/lib/utils/getErrorMessage'
 import type { LocationCascadeValue } from '@/components/features/LocationCascade'
 import { Button } from '@/components/ui/Button'
@@ -53,15 +55,6 @@ type SelectedPhoto = {
   previewUrl: string
 }
 
-function extractLocationId(location: LocationCascadeValue): string | undefined {
-  if (location.villageId) return location.villageId
-  if (location.cellId) return location.cellId
-  if (location.sectorId) return location.sectorId
-  if (location.districtId) return location.districtId
-  if (location.provinceId) return location.provinceId
-  return undefined
-}
-
 function formatNumber(value: string | number) {
   const numericValue = typeof value === 'number' ? value : Number(value)
 
@@ -74,24 +67,6 @@ function formatNumber(value: string | number) {
 
 function buildPhotoId(file: File) {
   return `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`
-}
-
-function readFileAsDataUrl(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result)
-        return
-      }
-
-      reject(new Error('Could not read the selected image'))
-    }
-
-    reader.onerror = () => reject(new Error('Could not read the selected image'))
-    reader.readAsDataURL(file)
-  })
 }
 
 export function PostHarvestForm() {
@@ -458,19 +433,17 @@ export function PostHarvestForm() {
         unitId: form.unitId,
         productId: form.productId,
         locationId,
+        contactPhone: form.phone.trim() || undefined,
+        contactWhatsapp: form.whatsapp.trim() || undefined,
         status: 'PENDING_REVIEW',
       })
 
-      for (const [index, photo] of photos.entries()) {
-        const dataUrl = await readFileAsDataUrl(photo.file)
-
-        await listingMediaApi.add({
-          listingId: listing.id,
-          url: dataUrl,
-          type: 'image',
-          order: index,
+      await Promise.all(
+        photos.map(async (photo, index) => {
+          const compressed = await compressImage(photo.file)
+          return listingMediaApi.upload({ listingId: listing.id, file: compressed, order: index })
         })
-      }
+      )
 
       await queryClient.invalidateQueries({ queryKey: queryKeys.listings.all })
       toast({
@@ -522,12 +495,36 @@ export function PostHarvestForm() {
                     <label className="text-sm font-medium text-[#1f2c21]">
                       Product <span className="text-accent">*</span>
                     </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isAuthenticated) {
+                          setShowLoginModal(true)
+                          return
+                        }
+                        if (!form.categoryId) {
+                          toast({ variant: 'error', description: t('selectCategoryFirst') })
+                          return
+                        }
+                        setShowNewProductModal(true)
+                      }}
+                      disabled={isLoadingCatalog}
+                      className="inline-flex items-center gap-1 text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
+                    >
+                      <Plus className="size-4" />
+                      Add new
+                    </button>
                   </div>
-                  <input
+                  <SearchableSelect
                     value={form.productId}
-                    onChange={(event) => patch({ productId: event.target.value })}
-                    className="h-12 w-full rounded-xl border-2 border-[#d8ddd8] bg-white px-4 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
-                    placeholder="Enter product name"
+                    onChange={(productId) => patch({ productId })}
+                    options={products
+                      .filter((product) => !form.categoryId || product.categoryId === form.categoryId)
+                      .map((p) => ({ id: p.id, name: p.name }))}
+                    placeholder="Select product"
+                    disabled={isLoadingCatalog || !form.categoryId}
+                    loading={isLoadingCatalog}
+                    className="w-full"
                   />
                 </div>
 

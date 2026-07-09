@@ -61,6 +61,29 @@ class ApiClient {
     return json as T
   }
 
+  async postForm<T>(endpoint: string, formData: FormData): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`
+    const headers: Record<string, string> = {}
+    if (this.accessToken) {
+      headers['Authorization'] = `Bearer ${this.accessToken}`
+    }
+
+    // No Content-Type here on purpose — the browser sets multipart/form-data with the
+    // correct boundary itself; setting it manually breaks the upload.
+    const response = await fetch(url, { method: 'POST', headers, body: formData })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'An error occurred' }))
+      throw new Error(error.message || `HTTP error ${response.status}`)
+    }
+
+    const json = await response.json()
+    if (json && typeof json === 'object' && 'data' in json) {
+      return json.data as T
+    }
+    return json as T
+  }
+
   requestRaw<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', body, headers = {} } = options
 
@@ -134,6 +157,7 @@ export const API_ENDPOINTS = {
     CELLS: '/locations/cells',
     VILLAGES: '/locations/villages',
     SEARCH: '/locations/search',
+    DETAIL: (id: string) => `/locations/${id}`,
   },
   CATEGORIES: '/categories',
   UNITS: '/units',
@@ -152,6 +176,14 @@ export const API_ENDPOINTS = {
     DELETE: (id: string, listingId: string) => `/media/${id}/listing/${listingId}`,
   },
   SAVED_SEARCHES: '/saved-searches',
+  FAVORITES: {
+    LIST: '/favorites',
+    TOGGLE: (listingId: string) => `/favorites/${listingId}`,
+  },
+  REPORTS: {
+    LIST: '/reports',
+    CREATE: '/reports',
+  },
   LEADS: {
     LIST: '/leads',
     BUYER: '/leads/buyer',
@@ -187,6 +219,10 @@ export const API_ENDPOINTS = {
     STATS: '/moderation/stats',
     APPROVE: (id: string) => `/moderation/listing/${id}/approve`,
     REJECT: (id: string) => `/moderation/listing/${id}/reject`,
+    CATEGORIES_PENDING: '/moderation/categories/pending',
+    CATEGORY_APPROVE: (id: string) => `/moderation/categories/${id}/approve`,
+    PRODUCTS_PENDING: '/moderation/products/pending',
+    PRODUCT_APPROVE: (id: string) => `/moderation/products/${id}/approve`,
   },
   PRICE_HISTORY: '/price-history',
 } as const

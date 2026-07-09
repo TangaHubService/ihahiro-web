@@ -7,61 +7,42 @@ export interface Location {
   parentId: string | null
 }
 
-interface ApiResponse {
-  items?: Location[]
-  data?: Location[]
+export interface LocationAncestor {
+  id: string
+  name: string
+  type: string
 }
 
-function mapResponse(response: unknown): Location[] {
-  if (Array.isArray(response)) return response as Location[]
-  const res = response as ApiResponse
-  if (Array.isArray(res.items)) return res.items
-  if (Array.isArray(res.data)) return res.data
-  return []
-}
-
-function getAllLocations(): Promise<Location[]> {
-  return apiClient.get<{ data: Location[] }>(API_ENDPOINTS.LOCATIONS.PROVINCES.replace('/provinces', '')).then(mapResponse)
+export interface LocationDetail extends Location {
+  ancestors?: LocationAncestor[]
 }
 
 export const locationsApi = {
-  getProvinces: async (): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.type === 'province')
+  getProvinces: (): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.PROVINCES)
   },
 
-  getDistricts: async (provinceId: string): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.type === 'district' && l.parentId === provinceId)
+  getDistricts: (provinceId: string): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.DISTRICTS, { parentId: provinceId })
   },
 
-  getSectors: async (districtId: string): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.type === 'sector' && l.parentId === districtId)
+  getSectors: (districtId: string): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.SECTORS, { parentId: districtId })
   },
 
-  getCells: async (sectorId: string): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.type === 'cell' && l.parentId === sectorId)
+  getCells: (sectorId: string): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.CELLS, { parentId: sectorId })
   },
 
-  getVillages: async (cellId: string): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.type === 'village' && l.parentId === cellId)
+  getVillages: (cellId: string): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.VILLAGES, { parentId: cellId })
   },
 
-  getByParentId: async (parentId: string): Promise<Location[]> => {
-    const all = await getAllLocations()
-    return all.filter((l) => l.parentId === parentId)
+  search: (query: string): Promise<Location[]> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.SEARCH, { q: query })
   },
 
-  search: async (query: string): Promise<Location[]> => {
-    const response = await apiClient.get(API_ENDPOINTS.LOCATIONS.SEARCH, { q: query })
-    return mapResponse(response)
-  },
-
-  getById: async (id: string): Promise<Location> => {
-    const all = await getAllLocations()
-    return all.find((l) => l.id === id)!
+  getById: (id: string): Promise<LocationDetail> => {
+    return apiClient.get(API_ENDPOINTS.LOCATIONS.DETAIL(id))
   },
 }

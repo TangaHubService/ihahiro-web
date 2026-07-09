@@ -5,7 +5,7 @@ import { Container } from '@/components/layout/Container'
 import { Button } from '@/components/ui/Button'
 import { Link, usePathname } from '@/i18n/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { Menu, Search, X, User, LogOut } from 'lucide-react'
+import { Menu, Search, X, User, LogOut, MessageCircle, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -38,6 +38,8 @@ export function Header() {
   const userDisplayName = typedUser
     ? `${typedUser.firstName} ${typedUser.lastName}`.trim()
     : ''
+
+  const isModerator = typedUser?.role === 'admin' || typedUser?.role === 'moderator'
 
   if (isLoading) {
     return (
@@ -101,6 +103,26 @@ export function Header() {
         <div className="flex shrink-0 items-center gap-2">
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
+              {isModerator ? (
+                <Link href="/moderation" className="hidden lg:inline-flex">
+                  <Button
+                    variant="ghost"
+                    className="h-10 gap-2 rounded-xl px-4 text-sm font-semibold"
+                  >
+                    <ShieldCheck className="size-4" />
+                    {t('moderation')}
+                  </Button>
+                </Link>
+              ) : null}
+              <Link href="/chat" className="hidden lg:inline-flex">
+                <Button
+                  variant="ghost"
+                  className="h-10 gap-2 rounded-xl px-4 text-sm font-semibold"
+                >
+                  <MessageCircle className="size-4" />
+                  {t('chat')}
+                </Button>
+              </Link>
               <Link href="/profile" className="hidden lg:inline-flex">
                 <Button
                   variant="ghost"
@@ -186,6 +208,34 @@ export function Header() {
             <div className="mt-4 border-t border-[#edf0ed] pt-4">
               {isAuthenticated ? (
                 <div className="grid gap-2">
+                  {isModerator ? (
+                    <Link
+                      href="/moderation"
+                      className="min-w-0"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="h-11 w-full gap-2 rounded-xl text-sm font-bold"
+                      >
+                        <ShieldCheck className="size-4" />
+                        {t('moderation')}
+                      </Button>
+                    </Link>
+                  ) : null}
+                  <Link
+                    href="/chat"
+                    className="min-w-0"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button
+                      variant="ghost"
+                      className="h-11 w-full gap-2 rounded-xl text-sm font-bold"
+                    >
+                      <MessageCircle className="size-4" />
+                      {t('chat')}
+                    </Button>
+                  </Link>
                   <Link
                     href="/profile"
                     className="min-w-0"
