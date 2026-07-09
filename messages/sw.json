@@ -229,6 +229,8 @@
     "pricePlaceholder": "Andika bei",
     "locationLabel": "Mahali ulipo",
     "locationPlaceholder": "Chagua wilaya / sekta",
+    "locationResolving": "Inalinganisha eneo lako...",
+    "locationPartialMatch": "Hatukuweza kulinganisha eneo hili kikamilifu — tafadhali kagua uchaguzi wako.",
     "cellLabel": "Kijiji (si lazima)",
     "cellPlaceholder": "Andika kijiji",
     "descriptionLabel": "Maelezo (si lazima)",

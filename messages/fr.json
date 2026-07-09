@@ -229,6 +229,8 @@
     "pricePlaceholder": "Saisir le prix",
     "locationLabel": "Votre localisation",
     "locationPlaceholder": "Choisir district / secteur",
+    "locationResolving": "Association de votre localisation...",
+    "locationPartialMatch": "Nous n'avons pas pu faire correspondre cet emplacement exactement — veuillez vérifier votre sélection.",
     "cellLabel": "Cellule (optionnel)",
     "cellPlaceholder": "Saisir la cellule",
     "descriptionLabel": "Description (optionnel)",

@@ -229,6 +229,8 @@
     "pricePlaceholder": "Andika igiciro",
     "locationLabel": "Aho uri",
     "locationPlaceholder": "Hitamo akarere / umurenge",
+    "locationResolving": "Turimo kugereranya aho uri...",
+    "locationPartialMatch": "Ntitwabashije kubona aho uri neza — nyamuneka ongera urebe icyo wahisemo.",
     "cellLabel": "Akagari (ntabwo ari ngombwa)",
     "cellPlaceholder": "Andika akagari",
     "descriptionLabel": "Ibisobanuro (ntabwo ari ngombwa)",

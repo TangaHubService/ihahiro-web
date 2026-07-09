@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, DragEvent, useEffect, useRef, useState, useTransition } from 'react'
-import { LocationBar } from '@/components/features/LocationBar'
+import { RwandaLocationPicker, type RwandaLocationValue } from '@/components/features/RwandaLocationPicker'
 import { Link, useRouter } from '@/i18n/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { locationsApi } from '@/lib/api/locations'
@@ -12,6 +12,7 @@ import { queryKeys } from '@/lib/queryKeys'
 import { compressImage } from '@/lib/utils/compressImage'
 import { extractLocationId } from '@/lib/utils/extractLocationId'
 import { getErrorMessage } from '@/lib/utils/getErrorMessage'
+import { resolveRwandaLocationId } from '@/lib/utils/resolveRwandaLocation'
 import type { LocationCascadeValue } from '@/components/features/LocationCascade'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
@@ -96,6 +97,9 @@ export function PostHarvestForm() {
   const [units, setUnits] = useState<Unit[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [photos, setPhotos] = useState<SelectedPhoto[]>([])
+  const [locationNames, setLocationNames] = useState<RwandaLocationValue>({})
+  const [isResolvingLocation, setIsResolvingLocation] = useState(false)
+  const [locationPartialMatch, setLocationPartialMatch] = useState(false)
   const [locationLabel, setLocationLabel] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(true)
@@ -200,6 +204,37 @@ export function PostHarvestForm() {
   }, [form.productId, form.unitId, products])
 
   useEffect(() => {
+    const selectedLevels = Object.values(locationNames).filter(Boolean).length
+    let isMounted = true
+
+    if (selectedLevels === 0) {
+      setLocationPartialMatch(false)
+      patch({ location: {} })
+      return
+    }
+
+    setIsResolvingLocation(true)
+    resolveRwandaLocationId(locationNames)
+      .then(({ location, matchedDepth }) => {
+        if (!isMounted) return
+        patch({ location })
+        setLocationPartialMatch(matchedDepth < selectedLevels)
+      })
+      .catch(() => {
+        if (!isMounted) return
+        patch({ location: {} })
+        setLocationPartialMatch(true)
+      })
+      .finally(() => {
+        if (isMounted) setIsResolvingLocation(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [locationNames.province, locationNames.district, locationNames.sector, locationNames.cell, locationNames.village])
+
+  useEffect(() => {
     const locationId = extractLocationId(form.location)
     let isMounted = true
 
@@ -238,6 +273,8 @@ export function PostHarvestForm() {
     revokePhotos(photosRef.current)
     setPhotos([])
     setLocationLabel('')
+    setLocationNames({})
+    setLocationPartialMatch(false)
     setForm({
       categoryId: '',
       productId: '',
@@ -598,7 +635,13 @@ export function PostHarvestForm() {
                   {t('locationLabel')} <span className="text-accent">*</span>
                 </label>
                 <div className="rounded-xl border border-[#d8ddd8] bg-white p-4">
-                  <LocationBar value={form.location} onChange={(location) => patch({ location })} compact />
+                  <RwandaLocationPicker value={locationNames} onChange={setLocationNames} />
+                  {isResolvingLocation && (
+                    <p className="mt-2 text-xs text-[#7a837c]">{t('locationResolving')}</p>
+                  )}
+                  {!isResolvingLocation && locationPartialMatch && (
+                    <p className="mt-2 text-xs text-accent">{t('locationPartialMatch')}</p>
+                  )}
                 </div>
               </div>
 

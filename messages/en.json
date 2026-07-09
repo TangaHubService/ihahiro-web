@@ -229,6 +229,8 @@
     "pricePlaceholder": "Enter price",
     "locationLabel": "Your location",
     "locationPlaceholder": "Choose district / sector",
+    "locationResolving": "Matching your location...",
+    "locationPartialMatch": "We couldn't match this exactly — please double-check your selection.",
     "cellLabel": "Cell (optional)",
     "cellPlaceholder": "Enter cell",
     "descriptionLabel": "Description (optional)",
