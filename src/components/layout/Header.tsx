@@ -5,10 +5,10 @@ import { Container } from '@/components/layout/Container'
 import { Button } from '@/components/ui/Button'
 import { Link, usePathname } from '@/i18n/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { Menu, Search, X, User, LogOut, MessageCircle, ShieldCheck } from 'lucide-react'
+import { ChevronDown, Menu, MessageCircle, X, User, LogOut, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type AuthUser } from '@/lib/api/auth'
 
 const NAV_KEYS = [
@@ -20,11 +20,19 @@ const NAV_KEYS = [
   { href: '/contact', key: 'contact' as const },
 ]
 
+// When signed in, the header already carries account actions (moderation,
+// profile, logout), so fold the informational links into a "More" menu to
+// keep the bar from getting crowded.
+const PRIMARY_NAV_KEYS = NAV_KEYS.slice(0, 3)
+const MORE_NAV_KEYS = NAV_KEYS.slice(3)
+
 export function Header() {
   const t = useTranslations('nav')
   const tCommon = useTranslations('common')
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
   const { user, isAuthenticated, isLoading, logout } = useAuth()
 
   function isActive(href: string) {
@@ -33,6 +41,17 @@ export function Header() {
       : pathname === href || pathname.startsWith(`${href}/`)
   }
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const typedUser = user as AuthUser | undefined
 
   const userDisplayName = typedUser
@@ -40,6 +59,8 @@ export function Header() {
     : ''
 
   const isModerator = typedUser?.role === 'admin' || typedUser?.role === 'moderator'
+
+  const isChatRoute = pathname === '/chat' || pathname.startsWith('/chat/')
 
   if (isLoading) {
     return (
@@ -81,7 +102,7 @@ export function Header() {
           className="mx-3 hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2"
           aria-label={tCommon('appName')}
         >
-          {NAV_KEYS.map(({ href, key }) => {
+          {(isAuthenticated ? PRIMARY_NAV_KEYS : NAV_KEYS).map(({ href, key }) => {
             const active = isActive(href)
 
             return (
@@ -98,6 +119,54 @@ export function Header() {
               </Link>
             )
           })}
+
+          {isAuthenticated ? (
+            <div ref={moreMenuRef} className="relative">
+              <button
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={moreMenuOpen}
+                onClick={() => setMoreMenuOpen((open) => !open)}
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[0.82rem] font-medium transition-colors xl:px-3 xl:text-[0.92rem] ${
+                  MORE_NAV_KEYS.some(({ href }) => isActive(href))
+                    ? 'bg-[#eff6ec] font-semibold text-primary'
+                    : 'text-[#2f3a31] hover:bg-[#f5f8f3] hover:text-primary'
+                }`}
+              >
+                {t('more')}
+                <ChevronDown
+                  className={`size-3.5 transition-transform duration-200 ${moreMenuOpen ? 'rotate-180' : ''}`}
+                  aria-hidden
+                />
+              </button>
+
+              <div
+                role="menu"
+                aria-label={t('more')}
+                className={`absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 overflow-hidden rounded-xl border border-[#dfe5df] bg-white py-1 shadow-[0_12px_40px_rgba(21,45,25,0.15)] transition-all duration-200 ${
+                  moreMenuOpen
+                    ? 'visible translate-y-0 opacity-100'
+                    : 'invisible -translate-y-2 opacity-0'
+                }`}
+              >
+                {MORE_NAV_KEYS.map(({ href, key }) => (
+                  <Link
+                    key={key}
+                    href={href}
+                    role="menuitem"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className={`block px-4 py-2.5 text-sm font-medium transition-colors duration-150 ${
+                      isActive(href)
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-[#1f2937] hover:bg-[#f3f5f3]'
+                    }`}
+                  >
+                    {t(key)}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -114,15 +183,6 @@ export function Header() {
                   </Button>
                 </Link>
               ) : null}
-              <Link href="/chat" className="hidden lg:inline-flex">
-                <Button
-                  variant="ghost"
-                  className="h-10 gap-2 rounded-xl px-4 text-sm font-semibold"
-                >
-                  <MessageCircle className="size-4" />
-                  {t('chat')}
-                </Button>
-              </Link>
               <Link href="/profile" className="hidden lg:inline-flex">
                 <Button
                   variant="ghost"
@@ -224,19 +284,6 @@ export function Header() {
                     </Link>
                   ) : null}
                   <Link
-                    href="/chat"
-                    className="min-w-0"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Button
-                      variant="ghost"
-                      className="h-11 w-full gap-2 rounded-xl text-sm font-bold"
-                    >
-                      <MessageCircle className="size-4" />
-                      {t('chat')}
-                    </Button>
-                  </Link>
-                  <Link
                     href="/profile"
                     className="min-w-0"
                     onClick={() => setMobileMenuOpen(false)}
@@ -289,6 +336,17 @@ export function Header() {
             </div>
           </Container>
         </div>
+      ) : null}
+
+      {isAuthenticated && !isChatRoute ? (
+        <Link
+          href="/chat"
+          aria-label={t('chat')}
+          title={t('chat')}
+          className="fixed bottom-5 left-5 z-40 inline-flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(21,45,25,0.3)] transition-transform hover:scale-105 hover:opacity-90 sm:bottom-6 sm:left-6"
+        >
+          <MessageCircle className="size-6" aria-hidden />
+        </Link>
       ) : null}
     </header>
   )
