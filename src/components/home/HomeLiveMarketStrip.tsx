@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  HOME_LIVE_PRODUCT_ORDER,
-  getHomeProductVisual,
-  type HomeCatalogKey,
-} from '@/components/home/homeMarketplaceCatalog'
 import { Container } from '@/components/layout/Container'
 import { useListings } from '@/hooks/useListings'
 import { Link } from '@/i18n/navigation'
@@ -12,60 +7,19 @@ import { ChevronRight, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
-type HomeLiveItem = {
-  id: string
-  href: string
-  image: string
-  location: string
-  name: string
-  price: number
-  quantity: number
-}
-
 export function HomeLiveMarketStrip() {
   const t = useTranslations('home')
   const tCommon = useTranslations('common')
-  const tProducts = useTranslations('products')
-  const { data, isError } = useListings({
+  const { data } = useListings({
     status: 'PUBLISHED',
     limit: 5,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   })
 
-  const sampleItems: HomeLiveItem[] = HOME_LIVE_PRODUCT_ORDER.map((key) => {
-    const visual = getHomeProductVisual(key)
+  const listings = data?.items ?? []
 
-    return {
-      id: key,
-      href: '/listings',
-      image: visual.image,
-      location: visual.location,
-      name: tProducts(key as HomeCatalogKey),
-      price: visual.price,
-      quantity: visual.quantity,
-    }
-  })
-
-  const items: HomeLiveItem[] =
-    data?.items?.length && !isError
-      ? data.items.slice(0, 5).map((listing, index) => {
-          const visual = getHomeProductVisual(
-            listing.product?.name ?? listing.title,
-            index
-          )
-
-          return {
-            id: listing.id,
-            href: `/listings/${listing.id}`,
-            image: visual.image,
-            location: listing.location?.name ?? visual.location,
-            name: listing.product?.name ?? listing.title,
-            price: listing.price || visual.price,
-            quantity: listing.quantity || visual.quantity,
-          }
-        })
-      : sampleItems
+  if (listings.length === 0) return null
 
   return (
     <section className="bg-white py-8 md:py-10">
@@ -85,38 +39,44 @@ export function HomeLiveMarketStrip() {
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5 xl:gap-0">
-            {items.map((item, index) => (
+            {listings.map((listing, index) => (
               <Link
-                key={item.id}
-                href={item.href}
+                key={listing.id}
+                href={`/listings/${listing.id}`}
                 className={`rounded-[1.1rem] bg-white px-4 py-4 shadow-sm ring-1 ring-[#e3eadf] transition-shadow hover:shadow-md xl:rounded-none xl:bg-transparent xl:shadow-none xl:ring-0 ${
                   index > 0 ? 'xl:border-l xl:border-[#dae4d6] xl:pl-6' : ''
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="relative size-11 shrink-0 overflow-hidden rounded-full bg-[#e7f0e3]">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                      sizes="44px"
-                    />
+                    {listing.media?.[0]?.url ? (
+                      <Image
+                        src={listing.media[0].url}
+                        alt={listing.product?.name ?? listing.title}
+                        fill
+                        className="object-cover"
+                        sizes="44px"
+                      />
+                    ) : (
+                      <div className="flex size-full items-center justify-center text-sm font-semibold text-[#9aaa98]">
+                        {listing.product?.name?.charAt(0)?.toUpperCase()}
+                      </div>
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-[0.98rem] font-semibold text-[#17311b]">
-                      {item.name}
+                      {listing.product?.name ?? listing.title}
                     </p>
                     <p className="mt-1 text-xs text-[#5f6a60]">
-                      {item.quantity} {tCommon('kg')}
+                      {listing.quantity} {tCommon('kg')}
                     </p>
                     <p className="mt-1 flex items-center gap-1 truncate text-xs text-[#7a857a]">
                       <MapPin className="size-3 shrink-0" aria-hidden />
-                      {item.location}
+                      {listing.location?.name ?? ''}
                     </p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <p className="text-sm font-bold text-primary">
-                        {item.price} RWF {tCommon('perKg')}
+                        {listing.price} RWF {tCommon('perKg')}
                       </p>
                       <span className="rounded-full bg-[#e8f3e3] px-2 py-1 text-[0.65rem] font-semibold text-primary">
                         {tCommon('new')}

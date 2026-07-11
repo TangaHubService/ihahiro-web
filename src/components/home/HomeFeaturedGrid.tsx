@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  HOME_PRODUCT_ORDER,
-  getHomeProductVisual,
-  type HomeCatalogKey,
-} from '@/components/home/homeMarketplaceCatalog'
 import { Container } from '@/components/layout/Container'
 import { useListings } from '@/hooks/useListings'
 import { Link } from '@/i18n/navigation'
@@ -12,57 +7,19 @@ import { ChevronRight, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
-type HomeFeaturedCard = {
-  id: string
-  href: string
-  image: string
-  location: string
-  name: string
-  price: number
-}
-
 export function HomeFeaturedGrid() {
   const t = useTranslations('home')
   const tCommon = useTranslations('common')
-  const tProducts = useTranslations('products')
-  const { data, isPending, isError } = useListings({
+  const { data, isPending } = useListings({
     status: 'PUBLISHED',
     limit: 6,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   })
 
-  const sampleCards: HomeFeaturedCard[] = HOME_PRODUCT_ORDER.map((key) => {
-    const visual = getHomeProductVisual(key)
+  const listings = data?.items ?? []
 
-    return {
-      id: key,
-      href: '/listings',
-      image: visual.image,
-      location: visual.location,
-      name: tProducts(key as HomeCatalogKey),
-      price: visual.price,
-    }
-  })
-
-  const cards: HomeFeaturedCard[] =
-    data?.items?.length && !isError
-      ? data.items.slice(0, 6).map((listing, index) => {
-          const visual = getHomeProductVisual(
-            listing.product?.name ?? listing.title,
-            index
-          )
-
-          return {
-            id: listing.id,
-            href: `/listings/${listing.id}`,
-            image: visual.image,
-            location: listing.location?.name ?? visual.location,
-            name: listing.product?.name ?? listing.title,
-            price: listing.price || visual.price,
-          }
-        })
-      : sampleCards
+  if (listings.length === 0) return null
 
   return (
     <section className="bg-white py-12 md:py-14">
@@ -81,34 +38,42 @@ export function HomeFeaturedGrid() {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {cards.map((card, index) => (
+          {listings.map((listing, index) => (
             <article
-              key={card.id}
+              key={listing.id}
               className="overflow-hidden rounded-[1.05rem] border border-[#dfe7dc] bg-white shadow-[0_12px_24px_rgba(21,45,25,0.04)]"
             >
               <div className="relative aspect-[1.45/1] w-full overflow-hidden bg-[#eef4ea]">
-                <Image
-                  src={card.image}
-                  alt={card.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 16vw"
-                  priority={index < 2 && !isPending}
-                />
+                {listing.media?.[0]?.url ? (
+                  <Image
+                    src={listing.media[0].url}
+                    alt={listing.product?.name ?? listing.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 16vw"
+                    priority={index < 2 && !isPending}
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center text-[#9aaa98]">
+                    {listing.product?.name?.charAt(0)?.toUpperCase()}
+                  </div>
+                )}
               </div>
               <div className="p-4">
                 <h3 className="truncate text-[1.05rem] font-bold text-[#17311b]">
-                  {card.name}
+                  {listing.product?.name ?? listing.title}
                 </h3>
                 <p className="mt-1 flex items-center gap-1 text-xs text-[#687269]">
                   <MapPin className="size-3.5 shrink-0" aria-hidden />
-                  <span className="truncate">{card.location}</span>
+                  <span className="truncate">
+                    {listing.location?.name ?? ''}
+                  </span>
                 </p>
                 <p className="mt-4 text-[1.15rem] font-black text-primary">
-                  {card.price} RWF {tCommon('perKg')}
+                  {listing.price} RWF {tCommon('perKg')}
                 </p>
                 <Link
-                  href={card.href}
+                  href={`/listings/${listing.id}`}
                   className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-[#14671a]"
                 >
                   {tCommon('view')}
