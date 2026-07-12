@@ -10,6 +10,7 @@ export const queryKeys = {
     lists: () => ['listings', 'list'] as const,
     list: (filters: ListingFilters) => ['listings', 'list', filters] as const,
     detail: (id: string) => ['listings', 'detail', id] as const,
+    mine: (filters: ListingFilters) => ['listings', 'mine', filters] as const,
   },
   categories: {
     all: ['categories'] as const,

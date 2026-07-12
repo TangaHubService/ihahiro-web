@@ -439,7 +439,15 @@
     "saveError": "Impossible de mettre à jour votre profil. Réessayez.",
     "buyerBadge": "Acheteur",
     "sellerBadge": "Vendeur",
-    "loadError": "Impossible de charger votre profil."
+    "loadError": "Impossible de charger votre profil.",
+    "myListingsTitle": "Mes annonces",
+    "myListingsEmpty": "Vous n'avez encore rien publié.",
+    "myListingsError": "Impossible de charger vos annonces.",
+    "statusDraft": "Brouillon",
+    "statusPendingReview": "En attente de validation",
+    "statusPublished": "Publiée",
+    "statusRejected": "Refusée",
+    "statusArchived": "Archivée"
   },
   "footer": {
     "mission": "Relier agriculteurs et acheteurs au Rwanda avec un marché moderne et fiable.",
@@ -485,7 +493,11 @@
     "send": "Envoyer",
     "noThreadSelectedTitle": "Sélectionnez une conversation",
     "noThreadSelectedDescription": "Choisissez une conversation dans la liste pour voir les messages.",
-    "startError": "Impossible de démarrer la conversation. Veuillez réessayer."
+    "startError": "Impossible de démarrer la conversation. Veuillez réessayer.",
+    "newChatButton": "Nouvelle conversation",
+    "newChatTitle": "Démarrer une nouvelle conversation",
+    "newChatDescription": "Choisissez une personne à qui écrire.",
+    "newChatEmpty": "Personne à contacter pour le moment. Les vendeurs apparaîtront ici dès qu’ils publieront une annonce."
   },
   "moderation": {
     "title": "Modération",

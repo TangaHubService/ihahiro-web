@@ -58,7 +58,7 @@ export function ChatPageClient({ threadId }: { threadId?: string }) {
       </h1>
 
       <div className="mt-6 grid h-[36rem] overflow-hidden rounded-2xl border border-[#e1e7df] bg-white shadow-[0_14px_40px_rgba(21,45,25,0.04)] lg:grid-cols-[22rem_minmax(0,1fr)]">
-        <div className={cn('min-h-0 overflow-y-auto border-[#eaefe8] lg:border-r', selected ? 'hidden lg:block' : 'block')}>
+        <div className={cn('min-h-0 border-[#eaefe8] lg:border-r', selected ? 'hidden lg:block' : 'block')}>
           <ChatThreadList activeThreadId={selected?.id} onSelect={handleSelect} />
         </div>
 

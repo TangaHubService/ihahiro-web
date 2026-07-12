@@ -26,6 +26,20 @@ export function useListings(filters: Partial<ListingFilters> = {}) {
   })
 }
 
+export function useMyListings(filters: Partial<ListingFilters> = {}) {
+  const normalizedFilters: ListingFilters = {
+    page: filters.page ?? 1,
+    limit: filters.limit ?? 50,
+    sortBy: filters.sortBy ?? 'createdAt',
+    sortOrder: filters.sortOrder ?? 'desc',
+  }
+
+  return useQuery({
+    queryKey: queryKeys.listings.mine(normalizedFilters),
+    queryFn: () => listingsApi.myListings(normalizedFilters),
+  })
+}
+
 export function useListing(id: string | undefined) {
   return useQuery({
     queryKey: id ? queryKeys.listings.detail(id) : queryKeys.listings.detail(''),

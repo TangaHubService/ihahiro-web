@@ -439,7 +439,15 @@
     "saveError": "Imeshindwa kusasisha wasifu wako. Tafadhali jaribu tena.",
     "buyerBadge": "Mnunuzi",
     "sellerBadge": "Muuzaji",
-    "loadError": "Imeshindwa kupakia wasifu wako."
+    "loadError": "Imeshindwa kupakia wasifu wako.",
+    "myListingsTitle": "Bidhaa zangu",
+    "myListingsEmpty": "Bado hujachapisha kitu chochote.",
+    "myListingsError": "Imeshindikana kupakia bidhaa zako.",
+    "statusDraft": "Rasimu",
+    "statusPendingReview": "Inasubiri ukaguzi",
+    "statusPublished": "Imechapishwa",
+    "statusRejected": "Imekataliwa",
+    "statusArchived": "Imehifadhiwa"
   },
   "footer": {
     "mission": "Kuunganisha wakulima na wanunuzi Rwanda kwa soko la kisasa na la kuaminika.",
@@ -485,7 +493,11 @@
     "send": "Tuma",
     "noThreadSelectedTitle": "Chagua mazungumzo",
     "noThreadSelectedDescription": "Chagua mazungumzo kwenye orodha ili kuona ujumbe.",
-    "startError": "Imeshindwa kuanzisha mazungumzo. Tafadhali jaribu tena."
+    "startError": "Imeshindwa kuanzisha mazungumzo. Tafadhali jaribu tena.",
+    "newChatButton": "Ujumbe mpya",
+    "newChatTitle": "Anzisha mazungumzo mapya",
+    "newChatDescription": "Chagua mtu wa kutumia ujumbe.",
+    "newChatEmpty": "Hakuna wa kutuma ujumbe kwa sasa. Wauzaji wataonekana hapa mara wakichapisha bidhaa."
   },
   "moderation": {
     "title": "Usimamizi",

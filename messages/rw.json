@@ -439,7 +439,15 @@
     "saveError": "Ntibyakunze kuvugurura umwirondoro wawe. Ongera ugerageze.",
     "buyerBadge": "Umuguzi",
     "sellerBadge": "Umucuruzi",
-    "loadError": "Ntibyakunze gufungura umwirondoro wawe."
+    "loadError": "Ntibyakunze gufungura umwirondoro wawe.",
+    "myListingsTitle": "Ibyo natangaje",
+    "myListingsEmpty": "Nturatangaza ikintu.",
+    "myListingsError": "Ntibishoboye gushaka ibyo watangaje.",
+    "statusDraft": "Bikirimo gukorwa",
+    "statusPendingReview": "Bitegereje kwemezwa",
+    "statusPublished": "Byatangajwe",
+    "statusRejected": "Byanze",
+    "statusArchived": "Byabitswe"
   },
   "footer": {
     "mission": "Guhuza abahinzi n'abaguzi mu Rwanda n'isoko ryizewe.",
@@ -485,7 +493,11 @@
     "send": "Ohereza",
     "noThreadSelectedTitle": "Hitamo ikiganiro",
     "noThreadSelectedDescription": "Hitamo ikiganiro ku rutonde kugira ngo urebe ubutumwa.",
-    "startError": "Ntibyakunze gutangira ikiganiro. Ongera ugerageze."
+    "startError": "Ntibyakunze gutangira ikiganiro. Ongera ugerageze.",
+    "newChatButton": "Ubutumwa bushya",
+    "newChatTitle": "Tangira ikiganiro gishya",
+    "newChatDescription": "Hitamo uwo wifuza kohereza ubutumwa.",
+    "newChatEmpty": "Nta wo wamenyesha ubu. Abacuruzi bazagaragara hano nibamara gutangaza umusaruro."
   },
   "moderation": {
     "title": "Igenzura",

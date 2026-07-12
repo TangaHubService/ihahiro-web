@@ -439,7 +439,15 @@
     "saveError": "Could not update your profile. Please try again.",
     "buyerBadge": "Buyer",
     "sellerBadge": "Seller",
-    "loadError": "Could not load your profile."
+    "loadError": "Could not load your profile.",
+    "myListingsTitle": "My listings",
+    "myListingsEmpty": "You haven't posted anything yet.",
+    "myListingsError": "Could not load your listings.",
+    "statusDraft": "Draft",
+    "statusPendingReview": "Pending review",
+    "statusPublished": "Published",
+    "statusRejected": "Rejected",
+    "statusArchived": "Archived"
   },
   "footer": {
     "mission": "Connecting Rwandan farmers and buyers with a modern, trustworthy marketplace.",
@@ -485,7 +493,11 @@
     "send": "Send",
     "noThreadSelectedTitle": "Select a conversation",
     "noThreadSelectedDescription": "Choose a conversation from the list to see the messages.",
-    "startError": "Could not start the conversation. Please try again."
+    "startError": "Could not start the conversation. Please try again.",
+    "newChatButton": "New chat",
+    "newChatTitle": "Start a new chat",
+    "newChatDescription": "Choose someone to message.",
+    "newChatEmpty": "No one to message yet. Sellers will show up here once they publish a listing."
   },
   "moderation": {
     "title": "Moderation",
