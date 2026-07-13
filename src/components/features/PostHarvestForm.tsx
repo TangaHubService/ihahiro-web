@@ -1,12 +1,29 @@
 'use client'
 
-import { ChangeEvent, DragEvent, useEffect, useRef, useState, useTransition } from 'react'
-import { RwandaLocationPicker, type RwandaLocationValue } from '@/components/features/RwandaLocationPicker'
+import {
+  ChangeEvent,
+  DragEvent,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
+import {
+  RwandaLocationPicker,
+  type RwandaLocationValue,
+} from '@/components/features/RwandaLocationPicker'
 import { Link, useRouter } from '@/i18n/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { locationsApi } from '@/lib/api/locations'
 import { listingMediaApi, listingsApi } from '@/lib/api/listings'
-import { productsApi, unitsApi, categoriesApi, type Product, type Unit, type Category } from '@/lib/api/products'
+import {
+  productsApi,
+  unitsApi,
+  categoriesApi,
+  type Product,
+  type Unit,
+  type Category,
+} from '@/lib/api/products'
 import { SearchableSelect } from '@/components/ui/SearchableSelect'
 import { queryKeys } from '@/lib/queryKeys'
 import { compressImage } from '@/lib/utils/compressImage'
@@ -118,7 +135,9 @@ export function PostHarvestForm() {
 
   useEffect(() => {
     return () => {
-      photosRef.current.forEach((photo) => URL.revokeObjectURL(photo.previewUrl))
+      photosRef.current.forEach((photo) =>
+        URL.revokeObjectURL(photo.previewUrl)
+      )
     }
   }, [])
 
@@ -129,11 +148,12 @@ export function PostHarvestForm() {
       setIsLoadingCatalog(true)
 
       try {
-        const [loadedProducts, loadedUnits, loadedCategories] = await Promise.all([
-          productsApi.list(),
-          unitsApi.list(),
-          categoriesApi.list(),
-        ])
+        const [loadedProducts, loadedUnits, loadedCategories] =
+          await Promise.all([
+            productsApi.list(),
+            unitsApi.list(),
+            categoriesApi.list(),
+          ])
 
         if (!isMounted) return
 
@@ -146,7 +166,9 @@ export function PostHarvestForm() {
 
           const preferredUnit =
             loadedUnits.find((unit) => unit.slug.toLowerCase() === 'kg') ??
-            loadedUnits.find((unit) => unit.shortName?.toLowerCase() === 'kg') ??
+            loadedUnits.find(
+              (unit) => unit.shortName?.toLowerCase() === 'kg'
+            ) ??
             loadedUnits[0]
 
           return {
@@ -196,12 +218,17 @@ export function PostHarvestForm() {
   }, [typedUser?.phone])
 
   useEffect(() => {
-    const selectedProduct = products.find((product) => product.id === form.productId)
+    // Pre-fill a sensible default unit when the product changes. This only
+    // reacts to the product selection (not form.unitId) so it doesn't fight
+    // a manual override made via the unit selector below.
+    const selectedProduct = products.find(
+      (product) => product.id === form.productId
+    )
 
-    if (!selectedProduct?.unitId || selectedProduct.unitId === form.unitId) return
+    if (!selectedProduct?.unitId) return
 
-    setForm((current) => ({ ...current, unitId: selectedProduct.unitId ?? current.unitId }))
-  }, [form.productId, form.unitId, products])
+    setForm((current) => ({ ...current, unitId: selectedProduct.unitId! }))
+  }, [form.productId, products])
 
   useEffect(() => {
     const selectedLevels = Object.values(locationNames).filter(Boolean).length
@@ -232,7 +259,13 @@ export function PostHarvestForm() {
     return () => {
       isMounted = false
     }
-  }, [locationNames.province, locationNames.district, locationNames.sector, locationNames.cell, locationNames.village])
+  }, [
+    locationNames.province,
+    locationNames.district,
+    locationNames.sector,
+    locationNames.cell,
+    locationNames.village,
+  ])
 
   useEffect(() => {
     const locationId = extractLocationId(form.location)
@@ -434,7 +467,9 @@ export function PostHarvestForm() {
     event.preventDefault()
 
     const locationId = extractLocationId(form.location)
-    const selectedProduct = products.find((product) => product.id === form.productId)
+    const selectedProduct = products.find(
+      (product) => product.id === form.productId
+    )
 
     if (!isAuthenticated) {
       setShowLoginModal(true)
@@ -478,7 +513,11 @@ export function PostHarvestForm() {
       await Promise.all(
         photos.map(async (photo, index) => {
           const compressed = await compressImage(photo.file)
-          return listingMediaApi.upload({ listingId: listing.id, file: compressed, order: index })
+          return listingMediaApi.upload({
+            listingId: listing.id,
+            file: compressed,
+            order: index,
+          })
         })
       )
 
@@ -501,12 +540,17 @@ export function PostHarvestForm() {
     }
   }
 
-  const selectedProduct = products.find((product) => product.id === form.productId)
+  const selectedProduct = products.find(
+    (product) => product.id === form.productId
+  )
   const selectedUnit =
     units.find((unit) => unit.id === form.unitId) ??
     units.find((unit) => unit.id === selectedProduct?.unitId)
   const sellerName =
-    [typedUser?.firstName, typedUser?.lastName].filter(Boolean).join(' ').trim() || tCommon('farmer')
+    [typedUser?.firstName, typedUser?.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim() || tCommon('farmer')
   const quantityLabel = `${formatNumber(form.quantity)} ${selectedUnit?.shortName ?? tCommon('kg')}`
   const locationPreview = locationLabel || t('previewLocation')
   const previewImage = photos[0]?.previewUrl ?? ''
@@ -540,7 +584,10 @@ export function PostHarvestForm() {
                           return
                         }
                         if (!form.categoryId) {
-                          toast({ variant: 'error', description: t('selectCategoryFirst') })
+                          toast({
+                            variant: 'error',
+                            description: t('selectCategoryFirst'),
+                          })
                           return
                         }
                         setShowNewProductModal(true)
@@ -556,7 +603,11 @@ export function PostHarvestForm() {
                     value={form.productId}
                     onChange={(productId) => patch({ productId })}
                     options={products
-                      .filter((product) => !form.categoryId || product.categoryId === form.categoryId)
+                      .filter(
+                        (product) =>
+                          !form.categoryId ||
+                          product.categoryId === form.categoryId
+                      )
                       .map((p) => ({ id: p.id, name: p.name }))}
                     placeholder="Select product"
                     disabled={isLoadingCatalog || !form.categoryId}
@@ -591,19 +642,25 @@ export function PostHarvestForm() {
                     onChange={(categoryId) => {
                       patch({ categoryId, productId: '' })
                     }}
-                    options={(categories || []).filter(Boolean).map((c) => ({ id: c.id, name: c.name }))}
+                    options={(categories || [])
+                      .filter(Boolean)
+                      .map((c) => ({ id: c.id, name: c.name }))}
                     placeholder="Select category"
                     disabled={isLoadingCatalog}
                     loading={isLoadingCatalog}
                     className="w-full"
                   />
                 </div>
+
+                <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-[#1f2c21]">
                     {t('quantityLabel')} <span className="text-accent">*</span>
                   </label>
                   <input
                     value={form.quantity}
-                    onChange={(event) => patch({ quantity: event.target.value })}
+                    onChange={(event) =>
+                      patch({ quantity: event.target.value })
+                    }
                     className="h-12 w-full rounded-xl border border-[#d8ddd8] bg-white px-4 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10"
                     placeholder={t('quantityPlaceholder')}
                     type="number"
@@ -613,34 +670,62 @@ export function PostHarvestForm() {
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-[#1f2c21]">
-                    {t('priceLabel')} <span className="text-accent">*</span>
+                    {t('unitLabel')} <span className="text-accent">*</span>
                   </label>
-                  <div className="relative">
-                    <input
-                      value={form.price}
-                      onChange={(event) => patch({ price: event.target.value })}
-                      className="h-12 w-full rounded-xl border border-[#d8ddd8] bg-white px-4 pr-20 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10"
-                      placeholder={t('pricePlaceholder')}
-                      type="number"
-                      min="1"
-                    />
-<span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#7a837c]">
-                      {tCommon('currency')}
-                    </span>
-                  </div>
+                  <SearchableSelect
+                    value={form.unitId}
+                    onChange={(unitId) => patch({ unitId })}
+                    options={units.map((unit) => ({
+                      id: unit.id,
+                      name: unit.shortName
+                        ? `${unit.name} (${unit.shortName})`
+                        : unit.name,
+                    }))}
+                    placeholder={t('unitPlaceholder')}
+                    disabled={isLoadingCatalog}
+                    loading={isLoadingCatalog}
+                    className="w-full"
+                  />
                 </div>
+              </div>
 
-                <div className="space-y-1.5">
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-[#1f2c21]">
+                  {t('priceLabel')} <span className="text-accent">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    value={form.price}
+                    onChange={(event) => patch({ price: event.target.value })}
+                    className="h-12 w-full rounded-xl border border-[#d8ddd8] bg-white px-4 pr-20 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10"
+                    placeholder={t('pricePlaceholder')}
+                    type="number"
+                    min="1"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#7a837c]">
+                    {tCommon('currency')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-[#1f2c21]">
                   {t('locationLabel')} <span className="text-accent">*</span>
                 </label>
                 <div className="rounded-xl border border-[#d8ddd8] bg-white p-4">
-                  <RwandaLocationPicker value={locationNames} onChange={setLocationNames} />
+                  <RwandaLocationPicker
+                    value={locationNames}
+                    onChange={setLocationNames}
+                  />
                   {isResolvingLocation && (
-                    <p className="mt-2 text-xs text-[#7a837c]">{t('locationResolving')}</p>
+                    <p className="mt-2 text-xs text-[#7a837c]">
+                      {t('locationResolving')}
+                    </p>
                   )}
                   {!isResolvingLocation && locationPartialMatch && (
-                    <p className="mt-2 text-xs text-accent">{t('locationPartialMatch')}</p>
+                    <p className="mt-2 text-xs text-accent">
+                      {t('locationPartialMatch')}
+                    </p>
                   )}
                 </div>
               </div>
@@ -652,7 +737,9 @@ export function PostHarvestForm() {
                 <div className="relative">
                   <textarea
                     value={form.description}
-                    onChange={(event) => patch({ description: event.target.value })}
+                    onChange={(event) =>
+                      patch({ description: event.target.value })
+                    }
                     maxLength={200}
                     rows={4}
                     className="w-full resize-none rounded-xl border border-[#d8ddd8] bg-white px-4 py-3 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10 placeholder:text-[#939a95]"
@@ -707,8 +794,12 @@ export function PostHarvestForm() {
                     <Upload className="size-6 text-primary" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-[#18251a]">{t('uploadTitle')}</p>
-                    <p className="mt-0.5 text-xs text-[#7d867f]">{t('uploadBody')}</p>
+                    <p className="font-semibold text-[#18251a]">
+                      {t('uploadTitle')}
+                    </p>
+                    <p className="mt-0.5 text-xs text-[#7d867f]">
+                      {t('uploadBody')}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -787,7 +878,9 @@ export function PostHarvestForm() {
                     <MessageCircle className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-primary" />
                     <input
                       value={form.whatsapp}
-                      onChange={(event) => patch({ whatsapp: event.target.value })}
+                      onChange={(event) =>
+                        patch({ whatsapp: event.target.value })
+                      }
                       className="h-12 w-full rounded-xl border border-[#d8ddd8] bg-white pl-11 pr-4 text-sm text-[#18251a] outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/10 placeholder:text-[#939a95]"
                       placeholder={t('phonePlaceholder')}
                       type="tel"
@@ -807,7 +900,11 @@ export function PostHarvestForm() {
                 {t('cancel')}
               </Button>
 
-              <Button type="submit" className="h-12 gap-2 rounded-xl px-6 font-black" disabled={isBusy}>
+              <Button
+                type="submit"
+                className="h-12 gap-2 rounded-xl px-6 font-black"
+                disabled={isBusy}
+              >
                 {isBusy ? t('submitting') : t('submitButton')}
                 <ArrowRight className="size-5" aria-hidden />
               </Button>
@@ -817,7 +914,9 @@ export function PostHarvestForm() {
 
         <aside className="space-y-5">
           <section className="rounded-2xl bg-[#eef4ec] p-5">
-            <h2 className="text-xl font-black text-primary">{t('previewTitle')}</h2>
+            <h2 className="text-xl font-black text-primary">
+              {t('previewTitle')}
+            </h2>
             <div className="mt-6 rounded-xl bg-white p-4 shadow-[0_16px_40px_rgba(21,45,25,0.07)]">
               <div className="flex gap-4">
                 <div className="relative flex size-36 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#ededed] text-[#6b716d]">
@@ -874,11 +973,16 @@ export function PostHarvestForm() {
           </section>
 
           <section className="rounded-2xl bg-[#eef4ec] p-5">
-            <h2 className="text-xl font-black text-primary">{t('tipsTitle')}</h2>
+            <h2 className="text-xl font-black text-primary">
+              {t('tipsTitle')}
+            </h2>
             <ul className="mt-5 space-y-4 text-sm text-[#4f5b52]">
               {tips.map((key) => (
                 <li key={key} className="flex gap-3">
-                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                  <CheckCircle2
+                    className="mt-0.5 size-4 shrink-0 text-primary"
+                    aria-hidden
+                  />
                   <span>{t(key)}</span>
                 </li>
               ))}
@@ -886,8 +990,12 @@ export function PostHarvestForm() {
           </section>
 
           <section className="rounded-2xl bg-[#eef4ec] p-5">
-            <h2 className="text-xl font-black text-primary">{t('helpTitle')}</h2>
-            <p className="mt-4 text-sm leading-relaxed text-[#4f5b52]">{t('helpBody')}</p>
+            <h2 className="text-xl font-black text-primary">
+              {t('helpTitle')}
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-[#4f5b52]">
+              {t('helpBody')}
+            </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href="/contact" className="inline-flex">
                 <Button
@@ -946,7 +1054,9 @@ export function PostHarvestForm() {
             onClick={() => {
               sessionStorage.setItem('pendingAddCategory', 'true')
               setShowLoginModal(false)
-              router.push(`/login?redirect=${encodeURIComponent('/post-harvest')}`)
+              router.push(
+                `/login?redirect=${encodeURIComponent('/post-harvest')}`
+              )
             }}
           >
             {t('loginModalConfirm')}
