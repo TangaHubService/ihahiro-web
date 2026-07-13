@@ -12,11 +12,13 @@ import {
 } from '@/lib/api/auth'
 import { apiClient } from '@/lib/api/client'
 import { queryKeys } from '@/lib/queryKeys'
+import { useRouter } from '@/i18n/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, useCallback } from 'react'
 
 export function useAuth() {
   const queryClient = useQueryClient()
+  const router = useRouter()
   const [initializing, setInitializing] = useState(true)
   const [token, setToken] = useState<string | null>(() => {
     const stored = getStoredToken()
@@ -105,6 +107,7 @@ export function useAuth() {
       setCachedUser(null)
       apiClient.setToken(null)
       queryClient.clear()
+      router.replace('/')
     },
     onError: () => {
       clearAuthSession()
@@ -112,6 +115,7 @@ export function useAuth() {
       setCachedUser(null)
       apiClient.setToken(null)
       queryClient.clear()
+      router.replace('/')
     },
   })
 

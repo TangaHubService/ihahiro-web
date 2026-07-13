@@ -78,7 +78,7 @@ export function ModerationDashboard() {
       <p className="max-w-2xl text-[#5f6c61]">{t('subtitle')}</p>
 
       <div className="mt-6">
-        <ModerationStatsCards />
+        <ModerationStatsCards activeTab={tab} onSelectTab={setTab} />
       </div>
 
       <div className="mt-6">

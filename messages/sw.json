@@ -36,7 +36,8 @@
     "next": "Ifuatayo",
     "page": "Ukurasa",
     "openMenu": "Fungua menyu",
-    "closeMenu": "Funga menyu"
+    "closeMenu": "Funga menyu",
+    "showing": "Inaonyesha"
   },
   "nav": {
     "home": "Nyumbani",
@@ -531,6 +532,20 @@
     "unknownSeller": "Muuzaji hajulikani",
     "rejectTitle": "Kataa orodha",
     "reasonLabel": "Sababu ya kukataa",
-    "reasonPlaceholder": "Eleza kinachohitaji kubadilishwa…"
+    "reasonPlaceholder": "Eleza kinachohitaji kubadilishwa…",
+    "filterDateFrom": "Kuanzia tarehe",
+    "filterDateTo": "Hadi tarehe",
+    "sortBy": "Panga kwa",
+    "sortByDate": "Tarehe ya kuongezwa",
+    "sortByName": "Jina",
+    "sortDirection": "Mpangilio",
+    "sortDescending": "Mpya kwanza",
+    "sortAscending": "Za zamani kwanza",
+    "clearFilters": "Futa vichujio",
+    "columnId": "ID",
+    "columnName": "Jina",
+    "columnDateAdded": "Tarehe ya kuongezwa",
+    "columnActions": "Vitendo",
+    "productsFilteredEmptyDescription": "Hakuna bidhaa inayosubiri inayolingana na vichujio vyako."
   }
 }

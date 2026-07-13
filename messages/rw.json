@@ -36,7 +36,8 @@
     "next": "Ibikurikira",
     "page": "Urupapuro",
     "openMenu": "Fungura menu",
-    "closeMenu": "Funga menu"
+    "closeMenu": "Funga menu",
+    "showing": "Bigaragara"
   },
   "nav": {
     "home": "Ahabanza",
@@ -531,6 +532,20 @@
     "unknownSeller": "Umucuruzi utazwi",
     "rejectTitle": "Anga icyatumijwe",
     "reasonLabel": "Impamvu yo kwanga",
-    "reasonPlaceholder": "Sobanura icyagomba guhindurwa…"
+    "reasonPlaceholder": "Sobanura icyagomba guhindurwa…",
+    "filterDateFrom": "Guhera itariki",
+    "filterDateTo": "Kugeza itariki",
+    "sortBy": "Shungura ukurikije",
+    "sortByDate": "Itariki yongeweho",
+    "sortByName": "Izina",
+    "sortDirection": "Uko bikurikirana",
+    "sortDescending": "Bishya mbere",
+    "sortAscending": "Bishaje mbere",
+    "clearFilters": "Siba muyunguruzi",
+    "columnId": "ID",
+    "columnName": "Izina",
+    "columnDateAdded": "Itariki yongeweho",
+    "columnActions": "Ibikorwa",
+    "productsFilteredEmptyDescription": "Nta gicuruzwa gitegereje gihuye na muyunguruzi yawe."
   }
 }

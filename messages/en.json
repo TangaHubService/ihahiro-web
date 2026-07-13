@@ -36,7 +36,8 @@
     "next": "Next",
     "page": "Page",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "showing": "Showing"
   },
   "nav": {
     "home": "Home",
@@ -531,6 +532,20 @@
     "unknownSeller": "Unknown seller",
     "rejectTitle": "Reject listing",
     "reasonLabel": "Reason for rejection",
-    "reasonPlaceholder": "Explain what needs to change…"
+    "reasonPlaceholder": "Explain what needs to change…",
+    "filterDateFrom": "From date",
+    "filterDateTo": "To date",
+    "sortBy": "Sort by",
+    "sortByDate": "Date added",
+    "sortByName": "Name",
+    "sortDirection": "Order",
+    "sortDescending": "Newest first",
+    "sortAscending": "Oldest first",
+    "clearFilters": "Clear filters",
+    "columnId": "ID",
+    "columnName": "Name",
+    "columnDateAdded": "Date added",
+    "columnActions": "Actions",
+    "productsFilteredEmptyDescription": "No pending products match your filters."
   }
 }

@@ -36,7 +36,8 @@
     "next": "Suivant",
     "page": "Page",
     "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "showing": "Affichage de"
   },
   "nav": {
     "home": "Accueil",
@@ -531,6 +532,20 @@
     "unknownSeller": "Vendeur inconnu",
     "rejectTitle": "Rejeter l'annonce",
     "reasonLabel": "Motif du rejet",
-    "reasonPlaceholder": "Expliquez ce qui doit être modifié…"
+    "reasonPlaceholder": "Expliquez ce qui doit être modifié…",
+    "filterDateFrom": "Date de début",
+    "filterDateTo": "Date de fin",
+    "sortBy": "Trier par",
+    "sortByDate": "Date d'ajout",
+    "sortByName": "Nom",
+    "sortDirection": "Ordre",
+    "sortDescending": "Plus récent d'abord",
+    "sortAscending": "Plus ancien d'abord",
+    "clearFilters": "Effacer les filtres",
+    "columnId": "ID",
+    "columnName": "Nom",
+    "columnDateAdded": "Date d'ajout",
+    "columnActions": "Actions",
+    "productsFilteredEmptyDescription": "Aucun produit en attente ne correspond à vos filtres."
   }
 }

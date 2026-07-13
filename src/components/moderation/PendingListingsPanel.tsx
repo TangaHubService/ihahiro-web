@@ -13,7 +13,7 @@ import { moderationApi } from '@/lib/api/moderation'
 import { queryKeys } from '@/lib/queryKeys'
 import { getErrorMessage } from '@/lib/utils/getErrorMessage'
 import { useToast } from '@/providers/ToastProvider'
-import { Eye } from 'lucide-react'
+import { Eye, Loader2 } from 'lucide-react'
 
 function formatDate(value: string) {
   const date = new Date(value)
@@ -110,6 +110,10 @@ export function PendingListingsPanel() {
         const sellerName = listing.seller
           ? `${listing.seller.firstName} ${listing.seller.lastName}`.trim()
           : t('unknownSeller')
+        const isApprovingThis =
+          approveMutation.isPending && approveMutation.variables === listing.id
+        const isRejectingThis =
+          rejectMutation.isPending && rejectMutation.variables?.id === listing.id
 
         return (
           <Card key={listing.id} className="border-[#e1e7df] p-4">
@@ -135,16 +139,19 @@ export function PendingListingsPanel() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-10 rounded-xl border-[#dfe5df] px-4 text-sm font-bold text-accent hover:bg-[#fff6f4]"
+                  className="h-10 gap-1.5 rounded-xl border-[#dfe5df] px-4 text-sm font-bold text-accent hover:bg-[#fff6f4]"
+                  disabled={isRejectingThis}
                   onClick={() => setRejectTarget(listing)}
                 >
+                  {isRejectingThis ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
                   {t('reject')}
                 </Button>
                 <Button
-                  className="h-10 rounded-xl px-4 text-sm font-bold"
-                  disabled={approveMutation.isPending}
+                  className="h-10 gap-1.5 rounded-xl px-4 text-sm font-bold"
+                  disabled={isApprovingThis}
                   onClick={() => approveMutation.mutate(listing.id)}
                 >
+                  {isApprovingThis ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
                   {t('approve')}
                 </Button>
               </div>
