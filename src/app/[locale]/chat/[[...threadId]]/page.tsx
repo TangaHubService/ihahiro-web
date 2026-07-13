@@ -1,5 +1,4 @@
-import { Footer } from '@/components/layout/Footer'
-import { Header } from '@/components/layout/Header'
+import { UserDashboardShell } from '@/components/layout/UserDashboardShell'
 import { ChatPageClient } from '@/features/chat/ChatPageClient'
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
@@ -20,14 +19,11 @@ export default async function ChatPage({
   params: Promise<{ threadId?: string[] }>
 }) {
   const { threadId } = await params
+  const t = await getTranslations('chat')
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1 bg-[#f7f8f5]">
-        <ChatPageClient threadId={threadId?.[0]} />
-      </main>
-      <Footer />
-    </div>
+    <UserDashboardShell title={t('title')}>
+      <ChatPageClient threadId={threadId?.[0]} />
+    </UserDashboardShell>
   )
 }

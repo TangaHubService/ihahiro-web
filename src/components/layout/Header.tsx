@@ -1,19 +1,12 @@
 'use client'
 
 import { LanguageSwitcher } from '@/components/features/LanguageSwitcher'
+import { ChatFab } from '@/components/layout/ChatFab'
 import { Container } from '@/components/layout/Container'
 import { Button } from '@/components/ui/Button'
 import { Link, usePathname } from '@/i18n/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import {
-  ChevronDown,
-  Menu,
-  MessageCircle,
-  X,
-  User,
-  LogOut,
-  ShieldCheck,
-} from 'lucide-react'
+import { ChevronDown, Menu, X, User, LogOut, ShieldCheck } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
@@ -71,8 +64,6 @@ export function Header() {
 
   const isModerator =
     typedUser?.role === 'admin' || typedUser?.role === 'moderator'
-
-  const isChatRoute = pathname === '/chat' || pathname.startsWith('/chat/')
 
   if (isLoading) {
     return (
@@ -354,20 +345,7 @@ export function Header() {
         ) : null}
       </header>
 
-      {isAuthenticated && !isChatRoute ? (
-        <Link
-          href="/chat"
-          aria-label={t('chat')}
-          title={t('chat')}
-          className="fixed bottom-5 right-5 z-40 inline-flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(21,45,25,0.3)] transition-transform hover:scale-105 hover:opacity-90 sm:bottom-6 sm:right-6"
-        >
-          <span
-            className="absolute inset-0 animate-ping rounded-full bg-primary/60"
-            aria-hidden
-          />
-          <MessageCircle className="relative size-6" aria-hidden />
-        </Link>
-      ) : null}
+      <ChatFab />
     </>
   )
 }
